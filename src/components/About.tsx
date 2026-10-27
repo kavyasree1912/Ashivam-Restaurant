@@ -1,0 +1,12 @@
+import { Flame, Leaf, Sparkles, Heart } from 'lucide-react';
+
+const pillars = [
+  { icon: Leaf, title: 'Fresh at Dawn', text: 'Produce arrives each morning from local growers, and our menu follows the season.' },
+  { icon: Flame, title: 'Over the Tandoor', text: 'Kebabs, breads, and vegetables meet live fire for the char only we can create.' },
+  { icon: Sparkles, title: 'Spice with Purpose', text: 'Whole spices are toasted and ground in-house, layered carefully into every dish.' },
+  { icon: Heart, title: 'Made to Share', text: 'Generous plates, warm service, and a room designed for long, unhurried evenings.' },
+];
+
+export default function About() {
+  return <section id="story" className="bg-[#0d0b08] py-20 sm:py-24 px-6"><div className="max-w-6xl mx-auto"><div className="grid lg:grid-cols-2 gap-14 items-center mb-20"><div className="relative order-2 lg:order-1"><div className="overflow-hidden"><img src="https://images.pexels.com/photos/37708443/pexels-photo-37708443.jpeg?auto=compress&cs=tinysrgb&h=900&w=1200" alt="Indian spices prepared for the kitchen" className="w-full h-[360px] sm:h-[470px] object-cover" /></div><div className="absolute -bottom-6 -right-6 hidden sm:block bg-[#e0a82e] text-[#0d0b08] px-8 py-6"><span className="block font-serif text-4xl">Agra</span><span className="block text-xs uppercase tracking-[0.2em] mt-2">Our home</span></div></div><div className="order-1 lg:order-2"><p className="text-[#e0a82e] text-xs uppercase tracking-[0.4em] mb-4">About the Restaurant</p><h2 className="font-serif text-4xl sm:text-5xl text-[#f3ead7] leading-[1.08] mb-6">A table built around fire, spice, and togetherness.</h2><p className="text-[#b7ac94] leading-relaxed mb-5">Saffron &amp; Stones is a modern Indian restaurant in Agra where tandoor-fired favorites meet the comfort of slow-simmered curries. We believe great food should arrive generous, fragrant, and made with care.</p><p className="text-[#8e8268] leading-relaxed">From our first spice blend to the last warm kulfi of the evening, every detail is meant to make you stay a little longer.</p></div></div><div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">{pillars.map((pillar) => <div key={pillar.title} className="group border-t border-[#2a241c] pt-6"><pillar.icon className="text-[#e0a82e] mb-4 group-hover:scale-110 transition-transform" size={28} strokeWidth={1.5} /><h3 className="font-serif text-xl text-[#f3ead7] mb-2">{pillar.title}</h3><p className="text-sm text-[#8e8268] leading-relaxed">{pillar.text}</p></div>)}</div></div></section>;
+}
