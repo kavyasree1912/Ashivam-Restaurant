@@ -4,7 +4,7 @@ import { fileURLToPath, URL } from 'node:url';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: //Ashivam-Restaurant/',
+  base: '/Ashivam-Restaurant/',
   plugins: [react()],
   resolve: {
     alias: {
