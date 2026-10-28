@@ -51,24 +51,24 @@ function DietBadge({ diet }: { diet: DietType }) {
 
 export default function MenuSection() {
   return (
-    <section id="menu" className="relative bg-[#13100b] py-20 sm:py-24 px-6">
+    <section id="menu" className="relative bg-[#f7f0e4] py-20 sm:py-24 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-[#e0a82e] text-xs uppercase tracking-[0.4em] mb-4">The Saffron Table</p>
-          <h2 className="font-serif text-4xl sm:text-5xl text-[#f3ead7] mb-4">Our Menu</h2>
-          <p className="text-[#8e8268] max-w-2xl mx-auto leading-relaxed">
+          <h2 className="font-serif text-4xl sm:text-5xl text-[#2f261a] mb-4">Our Menu</h2>
+          <p className="text-[#7c6a50] max-w-2xl mx-auto leading-relaxed">
             Classic Indian comfort and tandoor-fired favorites, made fresh to order.
             All prices are in Indian rupees.
           </p>
         </div>
 
-        <nav className="sticky top-[72px] z-20 -mx-6 px-6 py-3 mb-16 bg-[#13100b]/95 backdrop-blur-md border-y border-[#2a241c] overflow-x-auto">
+        <nav className="sticky top-[72px] z-20 -mx-6 px-6 py-3 mb-16 bg-[#f7f0e4]/95 backdrop-blur-md border-y border-[#e7dac3] overflow-x-auto">
           <div className="flex justify-center gap-2 min-w-max">
             {menuCategories.map((category) => (
               <a
                 key={category.id}
                 href={`#${category.id}`}
-                className="px-4 py-2 rounded-full border border-[#2a241c] text-[#b7ac94] text-xs uppercase tracking-[0.12em] hover:border-[#e0a82e] hover:text-[#e0a82e] transition-colors"
+                className="px-4 py-2 rounded-full border border-[#e7dac3] text-[#5c4b35] text-xs uppercase tracking-[0.12em] hover:border-[#e0a82e] hover:text-[#e0a82e] transition-colors"
               >
                 {category.label}
               </a>
@@ -84,12 +84,12 @@ export default function MenuSection() {
                   <p className="text-[#e0a82e] text-[10px] uppercase tracking-[0.35em] mb-2">
                     {category.items.length} selections
                   </p>
-                  <h3 className="font-serif text-3xl sm:text-4xl text-[#f3ead7]">{category.label}</h3>
-                  <p className="text-[#8e8268] italic font-serif text-lg mt-1">{category.blurb}</p>
+                  <h3 className="font-serif text-3xl sm:text-4xl text-[#2f261a]">{category.label}</h3>
+                  <p className="text-[#7c6a50] italic font-serif text-lg mt-1">{category.blurb}</p>
                 </div>
                 <a
                   href="#menu"
-                  className="hidden sm:flex items-center gap-1 text-[#9a8a6c] text-xs uppercase tracking-[0.12em] hover:text-[#e0a82e] transition-colors"
+                  className="hidden sm:flex items-center gap-1 text-[#7c6a50] text-xs uppercase tracking-[0.12em] hover:text-[#e0a82e] transition-colors"
                 >
                   Back to menu <ArrowUpRight size={14} />
                 </a>
@@ -99,7 +99,7 @@ export default function MenuSection() {
                 {category.items.map((item, index) => (
                   <article
                     key={item.name}
-                    className="group bg-[#0d0b08] border border-[#2a241c] overflow-hidden hover:border-[#e0a82e]/60 hover:-translate-y-1 transition-all duration-300 animate-fade-up"
+                    className="group bg-[#fffaf0] border border-[#e7dac3] overflow-hidden hover:border-[#e0a82e]/60 hover:-translate-y-1 transition-all duration-300 animate-fade-up"
                     style={{ animationDelay: `${index * 45}ms` }}
                   >
                     <div className="relative h-44 overflow-hidden">
@@ -109,9 +109,9 @@ export default function MenuSection() {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#fffaf0] via-transparent to-transparent" />
                       <div className="absolute top-3 left-3 flex items-center gap-2">
-                        <span className="bg-[#0d0b08]/90 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#d9ccb0]">
+                        <span className="bg-[#fffaf0]/90 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-[#5c4b35]">
                           {item.diet === 'non-veg' ? 'Non-Veg' : 'Veg'}
                         </span>
                         <DietBadge diet={item.diet} />
@@ -120,12 +120,12 @@ export default function MenuSection() {
                     </div>
                     <div className="p-5">
                       <div className="flex items-start justify-between gap-3 mb-2">
-                        <h4 className="font-serif text-xl text-[#f3ead7] group-hover:text-[#e0a82e] transition-colors">
+                        <h4 className="font-serif text-xl text-[#2f261a] group-hover:text-[#e0a82e] transition-colors">
                           {item.name}
                         </h4>
                         <span className="font-serif text-xl text-[#e0a82e] whitespace-nowrap">₹{item.price}</span>
                       </div>
-                      <p className="text-sm text-[#8e8268] leading-relaxed min-h-10">{item.description}</p>
+                      <p className="text-sm text-[#7c6a50] leading-relaxed min-h-10">{item.description}</p>
                       {item.tags && (
                         <div className="flex flex-wrap gap-2 mt-4">
                           {item.tags.map((tag) => (
@@ -143,7 +143,7 @@ export default function MenuSection() {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-6 mt-16 text-xs text-[#8e8268]">
+        <div className="flex flex-wrap items-center justify-center gap-6 mt-16 text-xs text-[#7c6a50]">
           <span className="flex items-center gap-2"><Leaf size={14} className="text-green-500" /> Vegetarian</span>
           <span className="flex items-center gap-2"><Drumstick size={14} className="text-red-500" /> Non-vegetarian</span>
           <span className="flex items-center gap-2"><Flame size={14} className="text-red-400" /> Spicy</span>

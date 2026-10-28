@@ -13,8 +13,14 @@ import Footer from '@/components/Footer';
 import AIConcierge from '@/components/AIConcierge';
 
 function App() {
+  const isAdminView = window.location.pathname === '/admin';
+
+  if (isAdminView) {
+    return <div className="min-h-screen bg-[#0d0b08]"><a href="/" className="fixed top-5 left-6 z-[70] text-xs uppercase tracking-[0.16em] text-[#d9ccb0] hover:text-[#e0a82e]">Back to website</a><AdminDashboard /></div>;
+  }
+
   return (
-    <div className="min-h-screen bg-[#0d0b08] text-[#d9ccb0]">
+    <div className="min-h-screen bg-[#fffaf0] text-[#5c4b35]">
       <Navbar />
       <main>
         <Hero />
@@ -26,7 +32,6 @@ function App() {
         <Events />
         <Testimonials />
         <Reservation />
-        <AdminDashboard />
       </main>
       <Footer />
       <AIConcierge />
