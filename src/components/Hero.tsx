@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react';
 export default function Hero() {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0"><img src="https://images.pexels.com/photos/29222614/pexels-photo-29222614.jpeg?auto=compress&cs=tinysrgb&h=1200&w=1920" alt="Warm Saffron & Stones dining room" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/85 via-[#0d0b08]/55 to-[#0d0b08]" /></div>
+      <div className="absolute inset-0"><img src="https://images.pexels.com/photos/29222614/pexels-photo-29222614.jpeg?auto=compress&cs=tinysrgb&h=1200&w=1920" alt="Warm Saffron & Stones dining room" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-b from-[#2f261a]/70 via-[#5c4b35]/35 to-[#2f261a]/80" /></div>
       <div className="absolute inset-4 sm:inset-8 lg:inset-12 z-[1] border border-[#e0a82e]/20 pointer-events-none" />
       <div className="absolute left-4 sm:left-8 lg:left-12 top-1/2 h-24 w-1 -translate-y-1/2 bg-[#e0a82e] shadow-[0_0_30px_rgba(224,168,46,0.8)]" />
       <div className="absolute right-4 sm:right-8 lg:right-12 top-1/2 h-24 w-1 -translate-y-1/2 bg-[#e0a82e] shadow-[0_0_30px_rgba(224,168,46,0.8)]" />
