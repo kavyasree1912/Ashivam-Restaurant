@@ -7,21 +7,17 @@ type Tab = 'dashboard' | 'orders' | 'reports';
 type OrderStatus = 'New' | 'Preparing' | 'Ready' | 'Completed' | 'Cancelled';
 type Order = { id: string; order_number: string; guest_name: string; order_type: 'Dine In' | 'Takeaway' | 'Delivery'; table_number: string | null; total: number; status: OrderStatus; created_at: string };
 type OrderDraft = { guest: string; type: Order['order_type']; table: string; total: string };
-
-const sampleOrders: Order[] = [
-  { id: '1', order_number: '#AG-1048', guest_name: 'Ananya Rao', order_type: 'Dine In', table_number: 'T2', total: 840, status: 'Preparing', created_at: new Date().toISOString() },
-  { id: '2', order_number: '#AG-1047', guest_name: 'Vikram Singh', order_type: 'Takeaway', table_number: null, total: 560, status: 'Ready', created_at: new Date().toISOString() },
-  { id: '3', order_number: '#AG-1046', guest_name: 'Meera Kapoor', order_type: 'Delivery', table_number: null, total: 1240, status: 'Completed', created_at: new Date().toISOString() },
-  { id: '4', order_number: '#AG-1045', guest_name: 'Rohan Das', order_type: 'Dine In', table_number: 'T8', total: 680, status: 'Completed', created_at: new Date().toISOString() },
-];
+type MenuItem = { id: string; name: string; category: string; dish_type: 'Veg' | 'Non-Veg'; price: number; description: string; created_at: string };
 const statuses: OrderStatus[] = ['New', 'Preparing', 'Ready', 'Completed', 'Cancelled'];
 const filters = ['All', ...statuses];
 const statusStyles: Record<OrderStatus, string> = { New: 'bg-sky-50 text-sky-700 border-sky-200', Preparing: 'bg-amber-50 text-amber-700 border-amber-200', Ready: 'bg-emerald-50 text-emerald-700 border-emerald-200', Completed: 'bg-stone-100 text-stone-700 border-[#3b2e1a]', Cancelled: 'bg-red-50 text-red-700 border-red-200' };
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [orders, setOrders] = useState<Order[]>(sampleOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [loadingMenu, setLoadingMenu] = useState(false);
   const [dashboardError, setDashboardError] = useState('');
   const [orderModal, setOrderModal] = useState(false);
   const [menuModal, setMenuModal] = useState(false);
@@ -30,11 +26,19 @@ export default function AdminDashboard() {
     const loadOrders = async () => {
       setLoadingOrders(true);
       const { data, error } = await supabase.from('restaurant_orders').select('*').order('created_at', { ascending: false });
-      if (error) setDashboardError('Live orders are unavailable, so sample tickets are shown.');
-      else if (data?.length) setOrders(data as Order[]);
+      if (error) setDashboardError('Live orders are unavailable. Please try again later.');
+      else setOrders((data ?? []) as Order[]);
       setLoadingOrders(false);
     };
+    const loadMenuItems = async () => {
+      setLoadingMenu(true);
+      const { data, error } = await supabase.from('restaurant_menu_items').select('*').order('created_at', { ascending: false });
+      if (error) setDashboardError('Menu items are unavailable. Please try again later.');
+      else setMenuItems((data ?? []) as MenuItem[]);
+      setLoadingMenu(false);
+    };
     void loadOrders();
+    void loadMenuItems();
   }, []);
 
   const addOrder = async (draft: OrderDraft) => {
@@ -47,16 +51,16 @@ export default function AdminDashboard() {
   const addMenuItem = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const values = new FormData(event.currentTarget);
-    const { error } = await supabase.from('restaurant_menu_items').insert({ name: String(values.get('name')), category: String(values.get('category')), dish_type: String(values.get('dishType')), price: Number(values.get('price')), description: String(values.get('description') || '') });
-    if (error) { setDashboardError('The menu item could not be saved. Please try again.'); return; }
-    setMenuModal(false); setDashboardError('Menu item added successfully.');
+    const { data, error } = await supabase.from('restaurant_menu_items').insert({ name: String(values.get('name')), category: String(values.get('category')), dish_type: String(values.get('dishType')), price: Number(values.get('price')), description: String(values.get('description') || '') }).select().maybeSingle();
+    if (error || !data) { setDashboardError('The menu item could not be saved. Please try again.'); return; }
+    setMenuItems((current) => [data as MenuItem, ...current]); setMenuModal(false); setDashboardError('Menu item added successfully.');
   };
 
-  return <section id="dashboard" className="bg-[#0d0b08] py-20 sm:py-24 px-6 border-t border-[#3b2e1a] [background-image:linear-gradient(rgba(224,168,46,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(224,168,46,0.08)_1px,transparent_1px)] [background-size:24px_24px]"><div className="max-w-7xl mx-auto"><div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10"><div className="flex items-start gap-4"><img src="/images/company_logo.jpeg" alt="Ashivam Technologies company logo" className="w-14 h-14 rounded-lg object-contain bg-[#17120c] border border-[#3b2e1a] p-1" /><div><p className="text-[#c77819] text-xs uppercase tracking-[0.35em] mb-3">Management</p><h2 className="font-serif text-4xl sm:text-5xl text-[#f3ead7]">Operations Dashboard</h2><p className="text-[#9a8a6c] mt-3">Your restaurant pulse at a glance — menus, orders, tables, and guests.</p></div></div><div className="flex items-center gap-2"><button onClick={() => setActiveTab('orders')} className="px-5 py-3 rounded-full border border-[#0c7461] text-[#0c7461] text-sm font-medium hover:bg-[#0c7461] hover:text-white transition-colors">View Orders</button><button onClick={() => setMenuModal(true)} className="px-5 py-3 rounded-full bg-[#f6a313] text-[#f3ead7] text-sm font-semibold shadow-lg shadow-orange-200 hover:bg-[#e99708] transition-colors"><Plus size={16} className="inline mr-1" /> Add New Item</button></div></div>{dashboardError && <div role="status" className="mb-6 flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">{dashboardError}<button onClick={() => setDashboardError('')} aria-label="Dismiss message"><X size={16} /></button></div>}<div className="flex gap-2 mb-8 overflow-x-auto">{[{ id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard }, { id: 'orders' as const, label: 'Orders', icon: ClipboardList }, { id: 'reports' as const, label: 'Reports', icon: BarChart3 }].map((tab) => <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-full border text-xs uppercase tracking-[0.12em] whitespace-nowrap ${activeTab === tab.id ? 'bg-[#161616] text-white border-[#161616]' : 'bg-[#17120c] text-[#9a8a6c] border-[#3b2e1a] hover:border-[#c77819]'}`}><tab.icon size={15} />{tab.label}</button>)}</div>{activeTab === 'dashboard' && <DashboardView onViewOrders={() => setActiveTab('orders')} />}{activeTab === 'orders' && <OrdersView orders={orders} setOrders={setOrders} loading={loadingOrders} onNewOrder={() => setOrderModal(true)} />}{activeTab === 'reports' && <ReportsView />}</div>{orderModal && <OrderModal onClose={() => setOrderModal(false)} onSave={addOrder} />}{menuModal && <MenuModal onClose={() => setMenuModal(false)} onSave={addMenuItem} />}</section>;
+  return <section id="dashboard" className="bg-[#0d0b08] py-20 sm:py-24 px-6 border-t border-[#3b2e1a] [background-image:linear-gradient(rgba(224,168,46,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(224,168,46,0.08)_1px,transparent_1px)] [background-size:24px_24px]"><div className="max-w-7xl mx-auto"><div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10"><div className="flex items-start gap-4"><img src="/images/image%20copy%207.png" alt="Ashivam Technologies company logo" className="w-14 h-14 rounded-lg object-contain bg-[#17120c] border border-[#3b2e1a] p-1" /><div><p className="text-[#c77819] text-xs uppercase tracking-[0.35em] mb-3">Management</p><h2 className="font-serif text-4xl sm:text-5xl text-[#f3ead7]">Operations Dashboard</h2><p className="text-[#9a8a6c] mt-3">Your restaurant pulse at a glance — menus, orders, tables, and guests.</p></div></div><div className="flex items-center gap-2"><button onClick={() => setActiveTab('orders')} className="px-5 py-3 rounded-full border border-[#0c7461] text-[#0c7461] text-sm font-medium hover:bg-[#0c7461] hover:text-white transition-colors">View Orders</button><button onClick={() => setMenuModal(true)} className="px-5 py-3 rounded-full bg-[#f6a313] text-[#f3ead7] text-sm font-semibold shadow-lg shadow-orange-200 hover:bg-[#e99708] transition-colors"><Plus size={16} className="inline mr-1" /> Add New Item</button></div></div>{dashboardError && <div role="status" className="mb-6 flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">{dashboardError}<button onClick={() => setDashboardError('')} aria-label="Dismiss message"><X size={16} /></button></div>}<div className="flex gap-2 mb-8 overflow-x-auto">{[{ id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard }, { id: 'orders' as const, label: 'Orders', icon: ClipboardList }, { id: 'reports' as const, label: 'Reports', icon: BarChart3 }].map((tab) => <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-full border text-xs uppercase tracking-[0.12em] whitespace-nowrap ${activeTab === tab.id ? 'bg-[#161616] text-white border-[#161616]' : 'bg-[#17120c] text-[#9a8a6c] border-[#3b2e1a] hover:border-[#c77819]'}`}><tab.icon size={15} />{tab.label}</button>)}</div>{activeTab === 'dashboard' && <DashboardView orders={orders} menuItems={menuItems} loadingMenu={loadingMenu} onViewOrders={() => setActiveTab('orders')} />}{activeTab === 'orders' && <OrdersView orders={orders} setOrders={setOrders} loading={loadingOrders} onNewOrder={() => setOrderModal(true)} />}{activeTab === 'reports' && <ReportsView />}</div>{orderModal && <OrderModal onClose={() => setOrderModal(false)} onSave={addOrder} />}{menuModal && <MenuModal onClose={() => setMenuModal(false)} onSave={addMenuItem} />}</section>;
 }
 
-function DashboardView({ onViewOrders }: { onViewOrders: () => void }) {
-  const cards = [{ value: '31', label: 'Total Items' }, { value: '19', label: 'Veg Dishes' }, { value: '12', label: 'Non-Veg Dishes' }, { value: '6', label: 'Categories' }];
+function DashboardView({ orders, menuItems, loadingMenu, onViewOrders }: { orders: Order[]; menuItems: MenuItem[]; loadingMenu: boolean; onViewOrders: () => void }) {
+  const cards = [{ value: loadingMenu ? '—' : String(menuItems.length), label: 'Total Items' }, { value: loadingMenu ? '—' : String(menuItems.filter((item) => item.dish_type === 'Veg').length), label: 'Veg Dishes' }, { value: loadingMenu ? '—' : String(menuItems.filter((item) => item.dish_type === 'Non-Veg').length), label: 'Non-Veg Dishes' }, { value: loadingMenu ? '—' : String(new Set(menuItems.map((item) => item.category)).size), label: 'Categories' }, { value: String(orders.length), label: 'Orders' }];
   return <div className="space-y-6"><div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">{cards.map((card) => <div key={card.label} className="bg-[#17120c] border border-[#3b2e1a] rounded-2xl p-6 shadow-sm"><div className="text-3xl font-semibold text-[#f3ead7]">{card.value}</div><div className="text-sm text-[#9a8a6c] mt-2">{card.label}</div></div>)}</div><div className="bg-[#17120c] border border-[#3b2e1a] rounded-2xl p-6"><div className="flex justify-between items-center mb-7"><div><h3 className="text-lg font-semibold text-[#f3ead7]">Revenue Overview</h3><p className="text-sm text-[#9a8a6c]">Last 12 months</p></div><span className="text-[#0c7461] text-sm flex items-center gap-1"><TrendingUp size={15} /> 24.8%</span></div><div className="h-44 flex items-end gap-2 sm:gap-4">{[42,58,48,70,64,82,76,92,84,96,89,100].map((value, index) => <div key={index} className="flex-1 h-full flex flex-col justify-end gap-2"><div className="rounded-t-sm bg-[#0c7461] hover:bg-[#f6a313] transition-colors" style={{ height: `${value}%` }} /><span className="text-[10px] text-[#75684f] text-center">{['J','F','M','A','M','J','J','A','S','O','N','D'][index]}</span></div>)}</div></div><button onClick={onViewOrders} className="text-sm font-medium text-[#0c7461] hover:text-[#c77819]">Open today’s orders →</button></div>;
 }
 
