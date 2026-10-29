@@ -13,9 +13,9 @@ import Footer from '@/components/Footer';
 import AIConcierge from '@/components/AIConcierge';
 
 function App() {
-  const isAdminView = window.location.pathname === '/admin';
+  const isDashboardView = window.location.pathname === '/dashboard' || window.location.pathname === '/admin';
 
-  if (isAdminView) {
+  if (isDashboardView) {
     return <div className="min-h-screen bg-[#0d0b08]"><a href="/" className="fixed top-5 left-6 z-[70] text-xs uppercase tracking-[0.16em] text-[#d9ccb0] hover:text-[#e0a82e]">Back to website</a><AdminDashboard /></div>;
   }
 
